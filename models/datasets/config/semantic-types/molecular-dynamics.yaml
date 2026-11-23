@@ -1,0 +1,42 @@
+# Adapted from the BioSim CZ file semantic type vocabulary
+# (https://biosimcz-architecture.biodata.ceitec.cz/). Each uri is the class of
+# the Molecular Simulation Ontology (MOLSIM) that the vocabulary links to.
+- id: run_input
+  label:
+    en: Run input
+    cs: Vstup simulace
+  definition:
+    en: Prepared simulation input that bundles what is needed to start a run, such as processed parameters, topology and coordinates.
+    cs: Připravený vstup simulace se vším, co je potřeba ke spuštění běhu, například zpracovanými parametry, topologií a souřadnicemi.
+- id: topology
+  label:
+    en: Topology
+    cs: Topologie
+  definition:
+    en: The atoms of a molecular system, their connectivity and their force-field parameters.
+    cs: Atomy molekulového systému, jejich vazby a parametry silového pole.
+  uri: http://purl.obolibrary.org/obo/MOLSIM_001091
+- id: structure
+  label:
+    en: Structure
+    cs: Struktura
+  definition:
+    en: The three-dimensional arrangement of the atoms of a molecular system.
+    cs: Trojrozměrné uspořádání atomů molekulového systému.
+  uri: http://purl.obolibrary.org/obo/MOLSIM_001088
+- id: parameter_file
+  label:
+    en: Parameter file
+    cs: Soubor parametrů
+  definition:
+    en: Simulation control settings, algorithms and thermodynamic conditions.
+    cs: Nastavení řízení simulace, algoritmy a termodynamické podmínky.
+  uri: http://purl.obolibrary.org/obo/MOLSIM_002065
+- id: trajectory
+  label:
+    en: Trajectory
+    cs: Trajektorie
+  definition:
+    en: The positions of the atoms, and optionally their velocities or forces, recorded during a simulation.
+    cs: Polohy atomů, případně i jejich rychlosti nebo síly, zaznamenané během simulace.
+  uri: http://purl.obolibrary.org/obo/MOLSIM_001090

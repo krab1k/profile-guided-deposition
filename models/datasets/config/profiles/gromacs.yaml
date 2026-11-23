@@ -1,0 +1,73 @@
+id: gromacs
+revision: "1.0"
+dataset_category:
+  en: GROMACS simulation
+  cs: Simulace v programu GROMACS
+semantic_types:
+  - id: run_input
+    filename_patterns: ["*.tpr"]
+    formats: [tpr]
+  - id: topology
+    filename_patterns: ["*.top", "*.itp"]
+    formats: [top, itp]
+  - id: structure
+    filename_patterns: ["*.gro", "*.pdb"]
+    formats: [gro, pdb]
+  - id: parameter_file
+    filename_patterns: ["*.mdp"]
+    formats: [mdp]
+  - id: trajectory
+    filename_patterns: ["*.xtc", "*.trr"]
+    formats: [xtc, trr]
+requirements:
+  - id: run-input
+    label:
+      en: Run input
+      cs: Vstup simulace
+    level: required
+    min_files: 1
+    max_files: 1
+    semantic_types: [run_input]
+    help:
+      en: Upload the prepared run input (TPR) of the simulation.
+      cs: Nahrajte připravený vstup simulace (TPR).
+  - id: topology
+    label:
+      en: Topology
+      cs: Topologie
+    level: recommended
+    min_files: 1
+    semantic_types: [topology]
+    help:
+      en: Add the topology (TOP) and any files it includes (ITP).
+      cs: Přiložte topologii (TOP) a soubory, které zahrnuje (ITP).
+  - id: structure
+    label:
+      en: Structure
+      cs: Struktura
+    level: recommended
+    min_files: 1
+    semantic_types: [structure]
+    help:
+      en: Add the starting structure (GRO).
+      cs: Přiložte výchozí strukturu (GRO).
+  - id: parameters
+    label:
+      en: Run parameters
+      cs: Parametry běhu
+    level: optional
+    min_files: 0
+    semantic_types: [parameter_file]
+    help:
+      en: Add the run parameter file (MDP).
+      cs: Přiložte soubor parametrů běhu (MDP).
+  - id: trajectories
+    label:
+      en: Trajectories
+      cs: Trajektorie
+    level: optional
+    min_files: 0
+    semantic_types: [trajectory]
+    help:
+      en: Add the trajectories (XTC, TRR).
+      cs: Přiložte trajektorie (XTC, TRR).
