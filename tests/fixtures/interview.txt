@@ -1,0 +1,4 @@
+Synthetic interview transcript for software verification; no participant data.
+Interviewer: What is the purpose of this example?
+Respondent: To verify repository upload and persistent file annotations.
+This text is illustrative, not a transcription of the silent audio fixture.
