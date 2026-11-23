@@ -1,0 +1,9 @@
+id: general-dataset
+revision: "1.0"
+dataset_category:
+  en: General dataset
+  cs: Obecná datová sada
+semantic_types:
+  - id: other
+    filename_patterns: ["*"]
+requirements: []

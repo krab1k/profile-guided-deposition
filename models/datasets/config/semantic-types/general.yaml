@@ -1,0 +1,9 @@
+- id: other
+  label:
+    en: Other file
+    cs: Jiný soubor
+  definition:
+    en: A file that none of the profile's specific types describe. Its description says what it is.
+    cs: Soubor, který nepopisuje žádný konkrétní typ profilu. Jeho popis uvádí, co obsahuje.
+  requires_description: true
+  search_filter: false
