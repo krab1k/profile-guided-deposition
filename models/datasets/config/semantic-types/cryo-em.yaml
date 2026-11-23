@@ -1,0 +1,28 @@
+- id: primary_map
+  label:
+    en: Primary map
+    cs: Primární mapa
+  definition:
+    en: The final density map that the entry presents and that the structure is interpreted from.
+    cs: Výsledná mapa hustoty, kterou záznam prezentuje a podle níž se interpretuje struktura.
+- id: half_map
+  label:
+    en: Half map
+    cs: Poloviční mapa
+  definition:
+    en: A map reconstructed from one half of the data, without filtering, masking or sharpening.
+    cs: Mapa rekonstruovaná z jedné poloviny dat, bez filtrace, maskování a zostření.
+- id: mask
+  label:
+    en: Mask
+    cs: Maska
+  definition:
+    en: A volume that marks the region of a map used in processing, for example in the resolution estimate.
+    cs: Objem, který vymezuje oblast mapy použitou při zpracování, například při odhadu rozlišení.
+- id: segmentation
+  label:
+    en: Segmentation
+    cs: Segmentace
+  definition:
+    en: Regions of a map that mark structures, such as molecules or their domains.
+    cs: Oblasti mapy, které vymezují struktury, například molekuly nebo jejich domény.

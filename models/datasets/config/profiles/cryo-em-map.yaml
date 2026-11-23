@@ -1,0 +1,60 @@
+id: cryo-em-map
+revision: "1.0"
+dataset_category:
+  en: Cryo-EM map
+  cs: Kryo-EM mapa
+semantic_types:
+  - id: primary_map
+    filename_patterns: ["*.map", "*.mrc"]
+    formats: [map, mrc]
+  - id: half_map
+    filename_patterns: ["*half*.map", "*half*.mrc"]
+    formats: [map, mrc]
+  - id: mask
+    filename_patterns: ["*mask*.map", "*mask*.mrc", "*msk*.map", "*msk*.mrc"]
+    formats: [map, mrc]
+  - id: segmentation
+    filename_patterns: ["*.sff", "*.hff", "*seg*.map", "*seg*.mrc"]
+requirements:
+  - id: primary-map
+    label:
+      en: Primary map
+      cs: Primární mapa
+    level: required
+    min_files: 1
+    max_files: 1
+    semantic_types: [primary_map]
+    help:
+      en: Upload the final map of the entry.
+      cs: Nahrajte výslednou mapu záznamu.
+  - id: half-maps
+    label:
+      en: Half maps
+      cs: Poloviční mapy
+    level: required
+    min_files: 2
+    max_files: 2
+    semantic_types: [half_map]
+    help:
+      en: Upload both half maps, unfiltered, unmasked and unsharpened.
+      cs: Nahrajte obě poloviční mapy bez filtrace, maskování a zostření.
+  - id: masks
+    label:
+      en: Masks
+      cs: Masky
+    level: recommended
+    min_files: 1
+    semantic_types: [mask]
+    help:
+      en: Add the masks used in processing, so the resolution estimate can be reproduced.
+      cs: Přiložte masky použité při zpracování, aby bylo možné odhad rozlišení zopakovat.
+  - id: segmentations
+    label:
+      en: Segmentations
+      cs: Segmentace
+    level: optional
+    min_files: 0
+    semantic_types: [segmentation]
+    help:
+      en: Add segmentations that mark structures in the map.
+      cs: Přiložte segmentace, které v mapě vymezují struktury.
