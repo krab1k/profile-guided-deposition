@@ -1,0 +1,119 @@
+/* Local document overrides; the BioSim theme remains unchanged. */
+.document-table caption {
+  caption-side: top;
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+.document-figure > figcaption {
+  text-align: left;
+  margin-top: 0.5rem;
+}
+.spaced-table td { padding-top: 0.5rem; padding-bottom: 0.5rem; vertical-align: top; }
+.glossary-table td { vertical-align: top; }
+
+@media screen and (max-width: 600px) {
+  table { table-layout: fixed; }
+  th, td { padding: 0.5rem; overflow-wrap: anywhere; }
+}
+
+/* Links use the template teal, including visited and hovered links. */
+.main-content a[href] { color: #008691; }
+.main-content a[href^="#"] { color: #008691; }
+
+/* Typography and front matter after the NRP Word template of the submitted
+   M5.1.2 report: Arial text, teal level-1 and blue level-2 headings. */
+.main-content {
+  max-width: 860px;
+  margin: 0 auto;
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
+  font-size: 11pt;
+  line-height: 1.45;
+  color: #000;
+}
+.main-content > p,
+.main-content li { text-align: justify; }
+.main-content h1,
+.main-content h2,
+.main-content h3 {
+  font-family: Arial, "Liberation Sans", Helvetica, sans-serif;
+  font-weight: normal;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.main-content h1 { color: #008691; font-size: 16pt; margin-top: 2.5rem; }
+.main-content h2 { color: #2f5496; font-size: 14pt; margin-top: 1.75rem; }
+.main-content h3 { color: #2f5496; font-size: 11pt; font-weight: bold; }
+.main-content .header-section-number { margin-right: 0.4em; }
+
+#title-block-header { text-align: center; margin-bottom: 1rem; }
+#title-block-header .cover-logo {
+  display: block;
+  width: 300px;
+  max-width: 60%;
+  margin: 0 0 1.5rem;
+  cursor: default;
+}
+#title-block-header h1.title {
+  color: #008691;
+  font-size: 18pt;
+  font-weight: normal;
+  line-height: 1.3;
+  margin: 0;
+}
+
+/* Front-matter tables keep the template's plain grid. */
+.front-table table,
+.glossary-table table {
+  table-layout: fixed;
+  border: 1px solid #b5b5c3;
+  box-shadow: none;
+  border-radius: 0;
+  color: #000;
+}
+.front-table tr,
+.front-table tr:nth-child(even),
+.front-table tr:hover,
+.glossary-table tr,
+.glossary-table tr:nth-child(even),
+.glossary-table tr:hover { background: #fff; }
+.front-table th,
+.front-table td,
+.glossary-table th,
+.glossary-table td {
+  border: 1px solid #b5b5c3;
+  background: #fff;
+  padding: 0.4rem 0.6rem;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+.front-table th { border-bottom: 2px solid #000; font-weight: bold; }
+.front-table a::after { content: none; }
+
+.contents-lists .contents-entry { margin: 0.2rem 0; }
+.contents-lists .contents-level-2 { padding-left: 1.5rem; }
+.contents-lists a[href],
+.contents-lists a[href^="#"] { color: #000; text-decoration: none; }
+.contents-lists a[href]:hover { text-decoration: underline; }
+
+.document-figure > figcaption,
+.document-table caption { font-size: 9pt; font-style: italic; }
+.document-figure > figcaption { text-align: center; }
+
+.cover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+.cover-footer img { width: 420px; max-width: 100%; cursor: default; }
+.cover-footer address {
+  font-style: normal;
+  font-size: 8pt;
+  line-height: 1.3;
+  text-align: right;
+  color: #008691;
+}

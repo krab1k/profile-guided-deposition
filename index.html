@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="robots" content="noindex, nofollow" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:," />
+  <title>D5.1.3 | Profile-guided deposition: repository implementation guide</title>
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/document.css" />
+</head>
+<body>
+  <div class="page-layout page-layout-single">
+    <main class="main-content">
+      <header id="title-block-header">
+        <img class="cover-logo" src="media/eosc.png" alt="National Czech Programme EOSC" />
+        <h1 class="title">D5.1.3 | Profile-guided deposition: repository
+implementation guide</h1>
+      </header>
+<h1 class="unnumbered unlisted same-page"
+id="document-information">Document Information</h1>
+<div class="front-table document-information" data-widths="0.3 0.7">
+<table>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Title</strong></td>
+<td style="text-align: left;"><strong>Profile-guided deposition:
+repository implementation guide</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Project Registration
+Number</strong></td>
+<td style="text-align: left;">CZ.02.01.01/00/23_014/0008787</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>KA Number</strong></td>
+<td style="text-align: left;">5.1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Outcome Name and
+Number</strong></td>
+<td style="text-align: left;">D5.1.3 – Profile-guided deposition:
+repository implementation guide</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Responsible Person</strong></td>
+<td style="text-align: left;">Ilona Trtíková,
+ilona.trtikova@cesnet.cz</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Licence</strong></td>
+<td style="text-align: left;">CC BY 4.0, <a
+href="https://creativecommons.org/licenses/by/4.0/"
+class="uri">https://creativecommons.org/licenses/by/4.0/</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 class="unnumbered unlisted same-page" id="version-history">Version
+History</h1>
+<div class="front-table" data-widths="0.15 0.2 0.65">
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>15.12.2026</td>
+<td>Initial version of the document</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 class="unnumbered unlisted" id="authors">Authors</h1>
+<div class="front-table" data-widths="0.25 0.18 0.27 0.3">
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Institution</th>
+<th>Name and Surname</th>
+<th>ORCID</th>
+<th>Email</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CEITEC, Masaryk University</td>
+<td>Tomáš Raček</td>
+<td><a
+href="https://orcid.org/0000-0002-0296-2452">0000-0002-0296-2452</a></td>
+<td>tomas.racek@muni.cz</td>
+</tr>
+<tr>
+<td>CEITEC, Masaryk University</td>
+<td>Filip Rusz</td>
+<td><a
+href="https://orcid.org/0009-0002-0046-9725">0009-0002-0046-9725</a></td>
+<td>251814@mail.muni.cz</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 class="unnumbered unlisted" id="list-of-abbreviations">List of
+Abbreviations</h1>
+<div class="front-table" data-widths="0.15 0.85">
+<table>
+<tbody>
+<tr>
+<td style="text-align: left;">API</td>
+<td style="text-align: left;">Application Programming Interface</td>
+</tr>
+<tr>
+<td style="text-align: left;">CCMM</td>
+<td style="text-align: left;">Czech Core Metadata Model</td>
+</tr>
+<tr>
+<td style="text-align: left;">EMDB</td>
+<td style="text-align: left;">Electron Microscopy Data Bank</td>
+</tr>
+<tr>
+<td style="text-align: left;">FAIR</td>
+<td style="text-align: left;">Findable, Accessible, Interoperable,
+Reusable</td>
+</tr>
+<tr>
+<td style="text-align: left;">MOLSIM</td>
+<td style="text-align: left;">Molecular Simulation Ontology</td>
+</tr>
+<tr>
+<td style="text-align: left;">NRP</td>
+<td style="text-align: left;">National Repository Platform for Research
+Data</td>
+</tr>
+<tr>
+<td style="text-align: left;">RDA</td>
+<td style="text-align: left;">Research Data Alliance</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="contents-lists">
+<h1 class="unnumbered unlisted same-page">Table of Contents</h1>
+<div class="contents-entry contents-level-1">
+<a href="#introduction">1 Introduction</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#define-semantic-types-and-profiles">2 Define Semantic Types
+and Profiles</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#implementation-walkthrough-cesnet-invenio">3 Implementation
+Walkthrough: CESNET Invenio</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#install-the-plugin-and-enable-it-on-the-model">3.1 Install the
+Plugin and Enable It on the Model</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#add-the-interview-configuration">3.2 Add the Interview
+Configuration</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#connect-the-deposit-form">3.3 Connect the Deposit Form</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#follow-a-deposit-from-draft-to-publication">3.4 Follow a
+Deposit from Draft to Publication</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#configure-other-datasets">4 Configure Other Datasets</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#catch-all-deposits">4.1 Catch-All Deposits</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#cryo-em-maps">4.2 Cryo-EM Maps</a>
+</div>
+<div class="contents-entry contents-level-2">
+<a href="#molecular-dynamics">4.3 Molecular Dynamics</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#use-annotations-in-processing">5 Use Annotations in
+Processing</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#contribution-to-fairness">6 Contribution to FAIRness</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#conclusion">7 Conclusion</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#related-outputs-and-resources">Related Outputs and
+Resources</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#glossary">Glossary</a>
+</div>
+<h1 class="unnumbered unlisted same-page">List of Figures</h1>
+<div class="contents-entry contents-level-1">
+<a href="#fig-repository-architecture"><strong>Figure 1.</strong> Parts
+of profile-guided deposition in a CESNET Invenio repository.</a>
+</div>
+<h1 class="unnumbered unlisted same-page">List of Tables</h1>
+<div class="contents-entry contents-level-1">
+<a href="#tbl-interview-profiles"><strong>Table 1.</strong> File
+requirements for the two illustrative interview profiles.</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#tbl-component-responsibilities"><strong>Table 2.</strong>
+Parts of the implementation and their responsibilities.</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#tbl-cryo-em-profile"><strong>Table 3.</strong> Illustrative
+file requirements for a cryo-EM map deposit.</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#tbl-gromacs-profile"><strong>Table 4.</strong> Illustrative
+GROMACS file requirements for one experiment.</a>
+</div>
+<div class="contents-entry contents-level-1">
+<a href="#tbl-processing-answers"><strong>Table 5.</strong> What a
+processing service needs to know and where a deposit provides it.</a>
+</div>
+</div>
+<h1 class="unnumbered unlisted" id="executive-summary">Executive
+Summary</h1>
+<p>This document is a guide for repository builders who want to add
+profile-guided deposition to a research data repository. Profile-guided
+deposition helps depositors supply the files their community expects and
+record what each file means. The guide builds on the concept and
+demonstration presented in M5.1.2, “Profile-guided deposition: concept
+and demonstration”.</p>
+<p>The guide first explains how to define shared semantic types and
+deposition profiles, using the interview example from M5.1.2. It then
+describes the components a repository needs: community configuration,
+deposition controls, a profile checker, search filters, a record page
+view, and the repository’s own file, metadata and lifecycle services. A
+step-by-step walkthrough shows how to install the oarepo-pgd plugin in a
+CESNET Invenio repository, add the interview configuration, connect the
+deposit form, and follow a deposit from draft to publication. Labels and
+guidance can be written in several languages, and the plugin’s own texts
+come in English and Czech.</p>
+<p>Further examples show how the same profile format supports catch-all
+deposits, cryo-EM maps and molecular-dynamics simulations following the
+BioSim CZ architecture. The guide also outlines how processing services
+can use file annotations to select inputs, extract metadata and combine
+files in previews.</p>
+<p>Profile-guided deposition contributes to FAIRness through explicit
+file expectations and machine-readable file meanings. A broader
+assessment of FAIRness also covers identifiers, access, licensing and
+preservation.</p>
+<h1 data-number="1" id="introduction"><span
+class="header-section-number">1</span> Introduction</h1>
+<p>Profile-guided deposition helps depositors supply the expected files
+and describe what they mean. <strong>Semantic types</strong> identify
+what individual files represent, independently of their format. A
+<strong>deposition profile</strong> uses these shared meanings to define
+file requirements and guidance for a kind of dataset. Several profiles
+can reuse the same semantic types.</p>
+<p>M5.1.2, “Profile-guided deposition: concept and demonstration”,
+introduces the approach and its terminology and illustrates its use from
+the depositor’s viewpoint with an interview example: a depositor shares
+an interview recording, its transcript and an interview guide, and
+switches between profiles for recorded and transcribed interviews. This
+guide continues that example and extends the approach to two further
+kinds of data with their own profiles: cryo-EM maps and
+molecular-dynamics simulations. It explains how to incorporate the
+approach into a repository, covering the general design and its
+implementation in <a href="https://nrp-cz.github.io/docs/">CESNET
+Invenio</a>, the Invenio-based repository platform used within NRP,
+distributed as the OARepo software packages.</p>
+<p>The guide uses the three roles from M5.1.2. The <strong>repository
+builder</strong> turns community requirements into semantic types,
+profiles and guidance. The <strong>depositor</strong> uploads files and
+reviews their annotations. <strong>Consumers</strong> are people or
+software that use the files and their annotations to understand or
+process the dataset.</p>
+<p>The NRP <a href="https://doi.org/10.71495/5dv6-v116">analysis of
+procedures for implementing the FAIR principles</a> recommends that
+repositories support the data standards of each research field and offer
+tools in the user interface for checking whether uploaded data comply.
+The analysis describes a repository’s rules through its metadata profile
+and data policy. A deposition profile adds file requirements to these
+rules.</p>
+<p>The repository already uploads files, saves metadata, controls access
+and manages publication. Profile support adds configuration, file
+annotations, deposition controls and a publication check to these
+existing services. Within NRP, the repository’s metadata profile
+describes the dataset as a whole and maps it to the common Czech Core
+Metadata Model (CCMM) record for discovery in the National Metadata
+Directory. The basic extension adds two fields for file information and
+leaves the existing dataset description and its mappings unchanged. It
+stores file annotations in the repository record. Adding them to
+metadata exports, such as DataCite, and to the CCMM record for the
+National Metadata Directory is a later step.</p>
+<h1 data-number="2" id="define-semantic-types-and-profiles"><span
+class="header-section-number">2</span> Define Semantic Types and
+Profiles</h1>
+<p>The repository builder turns community requirements into semantic
+types and deposition profiles. Communities choose requirements from
+their standards and practices. A <a
+href="https://www.gofair.foundation/fip">FAIR Implementation
+Profile</a>, where available, can inform these choices. Keeping terms,
+constraints and guidance separate follows established <a
+href="https://www.dublincore.org/specifications/dublin-core/profile-guidelines/">application-profile
+practice</a>.</p>
+<p>Each <strong>semantic type</strong> has a stable identifier, a
+display label and a definition. Profiles refer to these identifiers, and
+file annotations record them. The repository requires an annotation for
+every file, and a file can carry only the types its profile permits. A
+builder who wants a profile to accept miscellaneous files, such as a
+README or a list of checksums, defines a shared type <code>other</code>
+and lists it in that profile. The depositor selects it and adds a
+description saying what the file is. A profile without
+<code>other</code> accepts only files that its own types describe.</p>
+<p>Each <strong>deposition profile</strong> has an identifier, a
+revision, a display name, the semantic types a depositor may assign, and
+a list of file requirements. Each requirement has a label, a level,
+count limits, the semantic types that match it and guidance text for the
+depositor. The level sets how the repository checks the requirement:</p>
+<ul>
+<li><strong>Required:</strong> a count below the minimum blocks
+publication.</li>
+<li><strong>Recommended:</strong> a count below the minimum is shown to
+the depositor as a notice, and publication stays open.</li>
+<li><strong>Optional:</strong> matching files are counted and shown to
+the depositor.</li>
+</ul>
+<p>A maximum, where set, blocks publication when exceeded at any level.
+The configuration must be consistent: an optional requirement has a
+minimum of 0, a recommended requirement has a minimum of at least 1, and
+a maximum is at least the minimum. Requirements that list the same
+semantic types count the same files, so a required minimum above another
+such requirement’s maximum would block every deposit; the repository
+refuses such a profile.</p>
+<p>Each permitted type can also carry filename suggestions and a list of
+accepted formats. Filename suggestions help the form propose a type, and
+they belong to the profile because naming conventions differ between
+communities and tools. Accepted formats let the repository check that a
+file uses a representation the community accepts for that meaning, for
+example WAV or FLAC for interview recordings. The meaning itself stays
+independent of format: every permitted type remains selectable for any
+file, and the checks report a format the profile does not accept.</p>
+<p>Requirement matches are derived from the assigned semantic types and
+the repository’s current file inventory. A filename suggestion becomes
+an assignment as soon as the file is uploaded, and the depositor can
+inspect and correct it. A file matches a requirement when any of its
+types appears in that requirement’s list. Each distinct file counts once
+per matching requirement. Changing the selected profile preserves file
+annotations and applies the new requirements to them.</p>
+<p>The examples in this guide start from the interview example
+introduced in M5.1.2, “Profile-guided deposition: concept and
+demonstration”. In that example, a depositor shares an interview
+recording, its transcript and an interview guide. The example uses three
+shared semantic types and two deposition profiles. The semantic types
+are defined as follows:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> interview-recording</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Interview recording</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">definition</span><span class="kw">:</span><span class="at"> A recording of an interview session.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> interview-transcript</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Interview transcript</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">definition</span><span class="kw">:</span><span class="at"> A written transcription of an interview session.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> interview-guide</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Interview guide</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">definition</span><span class="kw">:</span><span class="at"> The questions or prompts used by the interviewer.</span></span></code></pre></div>
+<p>These local identifiers work within one repository. When annotations
+are exported or shared, consumers need the published definitions or the
+persistent URI of an equivalent community term.</p>
+<p>The two profiles share these definitions and specify the file
+requirements in <a href="#tbl-interview-profiles">Table 1</a>.</p>
+<table id="tbl-interview-profiles" class="document-table spaced-table">
+<caption><p><strong>Table 1.</strong> File requirements for the two
+illustrative interview profiles.</p></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Profile</th>
+<th>Required file</th>
+<th>Optional supporting files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recorded interview</td>
+<td>At least one interview recording.</td>
+<td>Interview transcript and interview guide.</td>
+</tr>
+<tr>
+<td>Transcribed interview</td>
+<td>At least one interview transcript.</td>
+<td>Interview guide.</td>
+</tr>
+</tbody>
+</table>
+<p>The Transcribed interview profile is shown below in the configuration
+format used by the implementation walkthrough, with shortened guidance
+and fewer filename patterns:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span><span class="kw">:</span><span class="at"> transcribed-interview</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">revision</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.0&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dataset_category</span><span class="kw">:</span><span class="at"> Transcribed interview</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">semantic_types</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> interview-transcript</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">filename_patterns</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;interview.txt&quot;</span><span class="kw">,</span><span class="at"> </span><span class="st">&quot;*transcript*.pdf&quot;</span><span class="kw">]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">formats</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">txt</span><span class="kw">,</span><span class="at"> pdf</span><span class="kw">,</span><span class="at"> docx</span><span class="kw">]</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> interview-guide</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">filename_patterns</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;*guide*.pdf&quot;</span><span class="kw">]</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">requirements</span><span class="kw">:</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> transcripts</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Transcripts</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">level</span><span class="kw">:</span><span class="at"> required</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">min_files</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">semantic_types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">interview-transcript</span><span class="kw">]</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">help</span><span class="kw">:</span><span class="at"> Provide a written transcription of the interview.</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> guides</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">label</span><span class="kw">:</span><span class="at"> Interview guides</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">level</span><span class="kw">:</span><span class="at"> optional</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">min_files</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">semantic_types</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">interview-guide</span><span class="kw">]</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">help</span><span class="kw">:</span><span class="at"> Add the questions or prompts used by the interviewer.</span></span></code></pre></div>
+<p>The profile’s <code>id</code> and <code>revision</code> identify the
+configuration applied to a deposit, and <code>dataset_category</code>
+supplies its display name. The profile’s <code>semantic_types</code>
+list names the permitted types; a file can carry only these types. Their
+<code>filename_patterns</code> pre-select a type for matching uploads,
+which the depositor can change. When several patterns match, the most
+specific one decides; if equally specific patterns belong to different
+types, no type is pre-selected. The optional <code>formats</code> list
+names the accepted formats, identified here by file suffix; the guide
+type omits it and accepts any format. A repository can also identify
+formats from file content. Each entry in <code>requirements</code> sets
+its <code>level</code>, a <code>min_files</code> count and an optional
+<code>max_files</code> count; omitting <code>max_files</code> leaves the
+upper count unrestricted. The <code>help</code> text explains what to
+provide. The exact pattern <code>interview.txt</code> matches the
+transcript filename used in the M5.1.2 example.</p>
+<h1 data-number="3" id="implementation-walkthrough-cesnet-invenio"><span
+class="header-section-number">3</span> Implementation Walkthrough:
+CESNET Invenio</h1>
+<p>A CESNET Invenio repository already uploads files, saves metadata,
+controls access and manages publication. The <a
+href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0">oarepo-pgd
+plugin, version 0.4.0</a>, adds profile-guided deposition to these
+services. To use it, the repository builder first installs the plugin,
+enables it on the dataset model and connects the deposit form. These are
+manual steps, done once. The builder then describes the community’s
+files as semantic types and deposition profiles in YAML files next to
+the model. The plugin supplies the deposition controls, the profile
+checker, the search filters and the record page view. <a
+href="#fig-repository-architecture">Figure 1</a> shows these parts and
+who supplies them.</p>
+<figure id="fig-repository-architecture" class="document-figure">
+<pre class="mermaid"><code>flowchart TB
+    subgraph Builder[&quot;Repository builder&quot;]
+        P[&quot;Semantic types and deposition profiles&quot;]
+    end
+    subgraph Plugin[&quot;oarepo-pgd plugin&quot;]
+        E(&quot;Deposition controls&quot;)
+        V(&quot;Profile checker&quot;)
+        F(&quot;Search filters&quot;)
+        D(&quot;Record page view&quot;)
+    end
+    subgraph Repository[&quot;CESNET Invenio&quot;]
+        R(&quot;File, metadata and lifecycle services&quot;)
+    end
+    C(&quot;Consumers&quot;)
+    P --&gt;|Types, requirements and guidance| E
+    P --&gt;|Rules| V
+    E --&gt;|Files and annotations| R
+    R &lt;--&gt;|Draft and check results| V
+    R --&gt;|Published files and annotations| C
+    R --&gt;|Indexed annotations| F
+    F --&gt;|Matching datasets| C
+    R --&gt;|Annotations of listed files| D
+    D --&gt;|File meanings| C
+    classDef asset fill:#d5f0a3,stroke:#9fca6b,stroke-width:1.5px,color:#2f3f2f;
+    classDef activity fill:#fff4d6,stroke:#d6a700,stroke-width:1.5px,color:#3f2a10;
+    class P asset;
+    class E,V,F,D,R,C activity;
+    style Builder fill:none,stroke:#777,stroke-width:1.5px,stroke-dasharray:6 4
+    style Plugin fill:none,stroke:#777,stroke-width:1.5px,stroke-dasharray:6 4
+    style Repository fill:none,stroke:#777,stroke-width:1.5px,stroke-dasharray:6 4</code></pre>
+<figcaption><p><strong>Figure 1.</strong> Parts of profile-guided
+deposition in a CESNET Invenio repository.</p></figcaption>
+</figure>
+<p>The green rectangle is configuration; yellow rounded boxes are
+activities. Unfilled dashed boundaries show who supplies each part. <a
+href="#tbl-component-responsibilities">Table 2</a> explains what each
+part does.</p>
+<table id="tbl-component-responsibilities" class="document-table">
+<caption><p><strong>Table 2.</strong> Parts of the implementation and
+their responsibilities.</p></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Part</th>
+<th>Supplied by</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Semantic types and deposition profiles</td>
+<td>Repository builder</td>
+<td>YAML files define file meanings, requirements and guidance. The
+builder writes them with domain scientists.</td>
+</tr>
+<tr>
+<td>Deposition controls</td>
+<td>Plugin</td>
+<td>In the deposit form, the depositor selects a profile, reviews the
+suggested type of each file and sees the requirement counts.</td>
+</tr>
+<tr>
+<td>Profile checker</td>
+<td>Plugin</td>
+<td>On the server, it checks the annotations and requirements against
+the draft’s current files on every save and before publication.</td>
+</tr>
+<tr>
+<td>Search filters</td>
+<td>Plugin</td>
+<td>On the search page and in the search API, readers filter published
+datasets by dataset category and by file type, with labels in their
+language.</td>
+</tr>
+<tr>
+<td>Record page view</td>
+<td>Plugin</td>
+<td>On a record’s page, it lists each file with its semantic types and
+description, for readers who may read the files.</td>
+</tr>
+<tr>
+<td>File, metadata and lifecycle services</td>
+<td>CESNET Invenio</td>
+<td>They save the deposit with its annotations, supply the authoritative
+file list and apply the publication check for all clients.</td>
+</tr>
+<tr>
+<td>Consumers</td>
+<td>People and software</td>
+<td>They interpret or process the published files using the
+annotations.</td>
+</tr>
+</tbody>
+</table>
+<p>The following steps are for a repository generated from the standard
+CESNET Invenio templates on <code>oarepo-app</code> 8 (OARepo 14.2,
+InvenioRDM 14). The <a
+href="https://github.com/krab1k/profile-guided-deposition">demonstrator
+repository</a> records the result of these steps as tags:</p>
+<ul>
+<li><code>d5.1.3-baseline</code> is the generated repository with a
+dataset model, offering English and Czech.</li>
+<li><code>d5.1.3-plugin</code> adds the installed and connected plugin.
+The <a
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-baseline...d5.1.3-plugin">difference
+from the baseline</a> shows the installation in
+<code>pyproject.toml</code> and its lock file,
+<code>models/datasets/model.py</code>,
+<code>ui/datasets/__init__.py</code> and the record page template.</li>
+<li><code>d5.1.3-interviews</code> adds the interview configuration. The
+<a
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-plugin...d5.1.3-interviews">difference
+from the plugin tag</a> contains only YAML files.</li>
+</ul>
+<h2 data-number="3.1"
+id="install-the-plugin-and-enable-it-on-the-model"><span
+class="header-section-number">3.1</span> Install the Plugin and Enable
+It on the Model</h2>
+<p>From the repository root, add the tagged release:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add git+https://github.com/sb-ncbr/oarepo-pgd <span class="at">--tag</span> v0.4.0</span></code></pre></div>
+<p>In <code>models/datasets/model.py</code>, import
+<code>pgd_preset</code> from <code>oarepo_pgd</code> and append
+<code>pgd_preset(__file__)</code> to the model’s existing
+<code>presets</code> list. The preset uses the model’s location to find
+its configuration. It also adds the two metadata fields that store the
+selected profile and the file annotations, so the model’s
+<code>metadata.yaml</code> stays unchanged. The plugin finds the deposit
+form by the <code>application_id</code> of the model’s user interface
+configuration. The repository templates set it to the model name, which
+the preset assumes; a repository that uses another value passes it to
+the preset, and the deposit page names the value if they differ.</p>
+<h2 data-number="3.2" id="add-the-interview-configuration"><span
+class="header-section-number">3.2</span> Add the Interview
+Configuration</h2>
+<p>The configuration lives in two directories next to the model:</p>
+<ul>
+<li><code>models/datasets/config/semantic-types/</code> holds the
+semantic types. Place the three interview types shown above in
+<code>interviews.yaml</code>.</li>
+<li><code>models/datasets/config/profiles/</code> holds one file per
+profile. Place the Transcribed interview profile in
+<code>transcribed-interview.yaml</code>. Add
+<code>recorded-interview.yaml</code> with the same structure, a required
+recording, an optional transcript and an optional guide.</li>
+</ul>
+<p>The plugin reads every YAML file (<code>.yaml</code> or
+<code>.yml</code>) in both directories at startup. Each label,
+definition, profile name and help text is either one text or a mapping
+of language codes to texts, such as
+<code>{en: Interview transcript, cs: Přepis rozhovoru}</code>. The
+repository shows each reader the text in their language, with English as
+the fallback; the plugin’s own texts come in English and Czech. A
+mistake in a file, such as a repeated key, stops startup with a message
+naming the file and line. An enabled model needs at least one
+profile.</p>
+<h2 data-number="3.3" id="connect-the-deposit-form"><span
+class="header-section-number">3.3</span> Connect the Deposit Form</h2>
+<p>In <code>ui/datasets/__init__.py</code>, append the plugin’s
+component to the model’s UI resource configuration, after the components
+already there:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> oarepo_pgd.components <span class="im">import</span> DepositionProfilesComponent</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DatasetsUIResourceConfig(RDMRecordsUIResourceConfig):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    components <span class="op">=</span> [</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>RDMRecordsUIResourceConfig.components,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        DepositionProfilesComponent,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ]</span></code></pre></div>
+<p>The component passes the model’s configuration to the deposit form
+and the file meanings to the record page. To show them on the record
+page, include the plugin’s template in the model’s record page template,
+<code>ui/datasets/templates/semantic-ui/datasets/record_detail/main.html</code>:</p>
+<pre class="jinja"><code>{%- block additional_record_details -%}
+  {{ super() }}
+  {% include &quot;oarepo_pgd/record_detail/file_meanings.html&quot; %}
+{%- endblock additional_record_details -%}</code></pre>
+<p>Run <code>./run.sh install</code> to rebuild the frontend. In the
+standard tabbed form, the plugin renames the files tab to <strong>Files
+and meanings</strong> and adds the profile controls to it. The controls
+use the repository’s theme, so the plugin brings no stylesheet and needs
+no change to the repository’s JavaScript.</p>
+<p>A repository can change how the controls look while the plugin keeps
+the checks: the profile selector, the requirement cards, the file
+assignments table and the semantic definitions can each be replaced by
+the repository’s own component, and the record page table by the
+repository’s own template at the same path. A repository with its own
+deposit form sets <code>OAREPO_PGD_UI_OVERRIDES = False</code> in
+<code>invenio.cfg</code> and places the controls itself. The <a
+href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0#deposit-form-standard-and-custom">plugin
+README</a> describes both. An independent frontend or other software can
+read the same configuration at
+<code>GET /api/deposition-profiles?model=datasets</code>.</p>
+<h2 data-number="3.4"
+id="follow-a-deposit-from-draft-to-publication"><span
+class="header-section-number">3.4</span> Follow a Deposit from Draft to
+Publication</h2>
+<p>In <strong>Files and meanings</strong>, the depositor selects
+<strong>Transcribed interview</strong>. With no files, the transcript
+requirement counts 0 of at least 1 file. After the upload of
+<code>interview.txt</code>, the filename pattern suggests
+<strong>Interview transcript</strong>, and the depositor can change the
+assignment. With that meaning assigned, the file satisfies the
+transcript requirement; an interview guide remains optional. The form
+shows the counts and marks each rule that still fails.</p>
+<p>The saved draft stores the selected profile and one annotation for
+each file in its metadata:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_deposition_profile&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;transcribed-interview&quot;</span><span class="fu">,</span> <span class="dt">&quot;revision&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0&quot;</span><span class="fu">},</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_file_annotations&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;file_key&quot;</span><span class="fu">:</span> <span class="st">&quot;interview.txt&quot;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;semantic_types&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;interview-transcript&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Transcript of the interview&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Here <code>file_key</code> is the name under which the repository
+stores the file in the record, exactly as the depositor’s computer
+supplied it. The depositor selects the profile by name, and the plugin
+records its revision.</p>
+<p>The profile checker runs on the server for every draft that has files
+enabled, including a draft with no uploads yet. It checks the selected
+profile and revision, the file annotations and the configured counts
+against the draft’s current files, and checks accepted formats by
+filename suffix. Only completed uploads count, so a publish request
+cannot rely on a file that is still uploading. A draft save reports the
+errors and keeps the draft. The same errors block publication through
+the form, a publish request or the API. A recommended requirement below
+its minimum is marked in yellow in the form and leaves publication open.
+A record with files disabled has no files to describe, so the form and
+the server apply no profile to it.</p>
+<p>After publication, the record’s page shows a <strong>File
+meanings</strong> table with the selected profile and each file’s
+semantic types and description. The search page offers two filters,
+<strong>Dataset category</strong> and <strong>File types</strong>,
+labelled from the configuration.</p>
+<p>File annotations name and describe the files, so they follow the
+record’s file access. A reader who may not access a record’s files sees
+no annotations on its page or through the record API. The search index
+holds the annotations only of records whose files anyone may read, so a
+search or the <strong>File types</strong> filter cannot reveal
+restricted files; a record with restricted files is still found by its
+dataset category.</p>
+<h1 data-number="4" id="configure-other-datasets"><span
+class="header-section-number">4</span> Configure Other Datasets</h1>
+<p>To support another domain, add its meanings, requirements and
+filename hints to the model’s configuration directories. The plugin uses
+the same metadata fields, endpoint, deposition controls and schema check
+for the new profiles. The examples below show configuration choices and
+identify where additional support is needed. The demonstrator repository
+adds each example as a further tag, and the difference from the
+preceding tag contains only YAML files.</p>
+<p>Before a profile goes into use, domain scientists review it against
+representative deposits and counterexamples. The plugin’s tests show
+that the configured rules are applied correctly; this review shows that
+they are the right rules for the community.</p>
+<h2 data-number="4.1" id="catch-all-deposits"><span
+class="header-section-number">4.1</span> Catch-All Deposits</h2>
+<p>A repository accepting diverse material can use a profile without
+requirements that permits the shared <code>other</code> type, together
+with any specific types it wants to offer:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span><span class="kw">:</span><span class="at"> general-dataset</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">revision</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.0&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dataset_category</span><span class="kw">:</span><span class="at"> General dataset</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">semantic_types</span><span class="kw">:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> other</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">filename_patterns</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;*&quot;</span><span class="kw">]</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">requirements</span><span class="kw">:</span><span class="at"> </span><span class="kw">[]</span></span></code></pre></div>
+<p>The pattern <code>"*"</code> is the least specific pattern, so it
+pre-selects <code>other</code> for every file that no more specific
+pattern matches. Set <code>requires_description: true</code> in the
+shared semantic-type definition for <code>other</code> to require a
+description whenever it is assigned, and
+<code>search_filter: false</code> to keep it out of the <strong>File
+types</strong> search filter, where it would match almost every general
+deposit. The depositor changes the files that deserve a specific meaning
+and describes the rest. The same rule applies as in the interview
+profiles: every file carries an annotation.</p>
+<p>The demonstrator adds this profile in the tag
+<code>d5.1.3-catch-all</code> (<a
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-interviews...d5.1.3-catch-all">difference
+from the interview tag</a>).</p>
+<h2 data-number="4.2" id="cryo-em-maps"><span
+class="header-section-number">4.2</span> Cryo-EM Maps</h2>
+<p>Cryo-electron microscopy (cryo-EM) reconstructs the three-dimensional
+shape of a molecule as a density map, a volume of values on a regular
+grid. The <a
+href="https://www.ebi.ac.uk/emdb/documentation/policies">Electron
+Microscopy Data Bank (EMDB)</a> archives such maps under published
+rules. Every entry has one primary map. Since 2022, entries from
+single-particle analysis and subtomogram averaging also need two half
+maps, each reconstructed from one half of the data. Masks and other
+additional maps are optional. <a href="#tbl-cryo-em-profile">Table 3</a>
+shows a profile modelled on these rules.</p>
+<table id="tbl-cryo-em-profile" class="document-table">
+<caption><p><strong>Table 3.</strong> Illustrative file requirements for
+a cryo-EM map deposit.</p></caption>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Level / count</th>
+<th>Semantic type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary map</td>
+<td>Required / exactly 1</td>
+<td><code>primary_map</code></td>
+</tr>
+<tr>
+<td>Half maps</td>
+<td>Required / exactly 2</td>
+<td><code>half_map</code></td>
+</tr>
+<tr>
+<td>Masks</td>
+<td>Recommended / at least 1</td>
+<td><code>mask</code></td>
+</tr>
+<tr>
+<td>Segmentations</td>
+<td>Optional</td>
+<td><code>segmentation</code></td>
+</tr>
+</tbody>
+</table>
+<p>The maps and masks usually share one format, such as MRC, so the
+format cannot tell a primary map from a half map or a mask. The meaning
+comes from the depositor: filename patterns such as
+<code>*half*.mrc</code> suggest a type, and the depositor confirms or
+corrects it. The counts express pairing without links between files.
+With exactly two half maps in the deposit, a validation service finds
+both by their type and computes the resolution estimate from them. The
+profile recommends masks, although EMDB treats them as optional, because
+the mask applied during processing is needed to reproduce that
+estimate.</p>
+<p>Some relationships need more than file counts. A segmentation refers
+to the map it was drawn on, which a profile cannot state when a deposit
+holds several maps. Multipart images and OME-Zarr stores, where one
+logical image spans many files, need a packaging convention before their
+files can be counted.</p>
+<p>The demonstrator adds the four types and the profile in the tag
+<code>d5.1.3-cryo-em</code> (<a
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-catch-all...d5.1.3-cryo-em">difference
+from the catch-all tag</a>).</p>
+<h2 data-number="4.3" id="molecular-dynamics"><span
+class="header-section-number">4.3</span> Molecular Dynamics</h2>
+<p>Molecular dynamics simulates the motion of atoms in a molecular
+system. A deposit typically holds prepared simulation inputs, files
+describing the molecular system, and the resulting trajectories. The <a
+href="https://biosimcz-architecture.biodata.ceitec.cz/">BioSim CZ
+architecture</a> describes a repository for such data, and this example
+follows it.</p>
+<p>In that architecture, a study contains one or more experiments. Each
+experiment is one simulation setup or run with its own files, and the
+depositor confirms a semantic type for each file from a shared
+vocabulary. The vocabulary links each type to a class of the <a
+href="https://bioregistry.io/molsim">Molecular Simulation Ontology
+(MOLSIM)</a>, such as
+<code>http://purl.obolibrary.org/obo/MOLSIM_001091</code> for
+topologies; in the configuration, this link becomes the type’s
+<code>uri</code>. The architecture lists the files of a GROMACS
+experiment with their requirement levels, and these translate directly
+into a deposition profile, as <a href="#tbl-gromacs-profile">Table 4</a>
+shows.</p>
+<table id="tbl-gromacs-profile" class="document-table">
+<caption><p><strong>Table 4.</strong> Illustrative GROMACS file
+requirements for one experiment.</p></caption>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Level / count</th>
+<th>Semantic type</th>
+<th>Typical files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Run input</td>
+<td>Required / exactly 1</td>
+<td><code>run_input</code></td>
+<td>TPR</td>
+</tr>
+<tr>
+<td>Topology</td>
+<td>Recommended / at least 1</td>
+<td><code>topology</code></td>
+<td>TOP, ITP</td>
+</tr>
+<tr>
+<td>Structure</td>
+<td>Recommended / at least 1</td>
+<td><code>structure</code></td>
+<td>GRO</td>
+</tr>
+<tr>
+<td>Run parameters</td>
+<td>Optional</td>
+<td><code>parameter_file</code></td>
+<td>MDP</td>
+</tr>
+<tr>
+<td>Trajectories</td>
+<td>Optional</td>
+<td><code>trajectory</code></td>
+<td>XTC, TRR</td>
+</tr>
+</tbody>
+</table>
+<p>Filename patterns such as <code>*.tpr</code> pre-select a type, and
+the depositor confirms or corrects it. The limit of exactly one run
+input reflects how the files are used later: a processing service reads
+one run input per simulation, and the limit lets it find that file from
+its type alone. The profile needs community review before adoption as a
+deposition standard.</p>
+<p>The files of one experiment belong together, because they describe
+the same simulation. Grouping files into experiments and checking every
+experiment before the study is published are the repository’s
+responsibilities. The profile format stays the same.</p>
+<p>The demonstrator adds the GROMACS profile and its types in the tag
+<code>d5.1.3-molecular-dynamics</code> (<a
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-cryo-em...d5.1.3-molecular-dynamics">difference
+from the cryo-EM tag</a>). There the profile applies to a whole deposit,
+which stands for one experiment.</p>
+<h1 data-number="5" id="use-annotations-in-processing"><span
+class="header-section-number">5</span> Use Annotations in
+Processing</h1>
+<p>A repository often processes the files it holds: it reads metadata
+from them, prepares previews or checks their content. Every such
+processing service first has to find out which tool applies to a
+deposit, which file plays which part, and whether its inputs are
+complete. File names give an unreliable answer. Many tools leave naming
+to the user, and one extension can stand for several kinds of file. A
+service that works from names carries its own naming rules for every
+tool and guesses when they fail.</p>
+<p>A deposit made under a profile already holds these answers, as <a
+href="#tbl-processing-answers">Table 5</a> shows.</p>
+<table id="tbl-processing-answers" class="document-table">
+<caption><p><strong>Table 5.</strong> What a processing service needs to
+know and where a deposit provides it.</p></caption>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>The service needs to know</th>
+<th>The deposit provides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Which tool applies</td>
+<td>The selected profile, for example GROMACS.</td>
+</tr>
+<tr>
+<td>Which file plays which part</td>
+<td>The semantic types, suggested by the form and confirmed by the
+depositor.</td>
+</tr>
+<tr>
+<td>Whether the inputs are complete</td>
+<td>The required files, checked before publication.</td>
+</tr>
+<tr>
+<td>Which rules applied</td>
+<td>The profile revision stored with the deposit.</td>
+</tr>
+</tbody>
+</table>
+<p>A service might need several files of a deposit, each for a different
+purpose. It finds them through the annotations. The type says what a
+file is. A count limit makes a file unique: a GROMACS deposit has
+exactly one run input, so the service needs no further choice. Where
+several files share a type, the format tells them apart: a GROMACS
+topology in TOP format is the main topology, and ITP files of the same
+type hold parts that it includes.</p>
+<p>Repository builders can plan for this when they write a profile. They
+ask what the services that later read the deposit need, make those files
+required, and limit a type to one file where a service reads exactly
+one.</p>
+<p>Two kinds of service show how this works:</p>
+<ul>
+<li><strong>Metadata extraction.</strong> The <a
+href="https://biosimcz-architecture.biodata.ceitec.cz/">BioSim CZ
+architecture</a> describes it for molecular dynamics. The profile
+identifies the simulation software and with it the extractor to use. The
+extractor reads the run input as its main source, and the topology and
+the structure for values the run input lacks, such as the force field or
+the box geometry. It finds each of these files by its type. An adaptor
+then maps the values to the repository’s metadata fields and
+vocabularies, converting units where needed, and the depositor reviews
+the proposed values.</li>
+<li><strong>File previews.</strong> A previewer usually shows one file
+at a time and chooses how to show it from the file’s format. Some files
+need a partner. A trajectory holds only atom positions, so a viewer can
+draw it only together with a structure, and a cryo-EM map is easier to
+judge with its mask. A previewer that asks the repository which files
+belong to the previewed one can load them together: the trajectory plays
+on the structure of the same deposit, and the primary map appears with
+its mask. Files without a specific type are previewed one at a time, and
+a trajectory among them has no preview.</li>
+</ul>
+<p>In both cases the depositor gains from the types they assigned: the
+repository proposes metadata read from the files and shows the dataset
+as a whole. An annotation records what the depositor confirmed. A
+service still checks that a file’s content fits its type, for example
+that a trajectory and its structure have the same number of atoms, and
+reports a mismatch separately from the profile check.</p>
+<p>The plugin stores the profile and the annotations. Extraction and
+previews are separate components and require their own implementation.
+Other consumers can use annotations for semantic grouping or further
+discovery filters, with their own display components or indexing.</p>
+<h1 data-number="6" id="contribution-to-fairness"><span
+class="header-section-number">6</span> Contribution to FAIRness</h1>
+<p>Profile-guided deposition contributes to the <a
+href="https://doi.org/10.1038/sdata.2016.18">FAIR principles</a> in
+specific ways. Some contributions come with the plugin, and others need
+further work by the repository builder.</p>
+<p>With the plugin installed, the repository:</p>
+<ul>
+<li>states the expected files for each kind of dataset and checks them
+before publication, which helps deposits arrive complete;</li>
+<li>saves each file’s semantic types and description in the record,
+where people and software that may access the files read them through
+the record API and on the record page;</li>
+<li>records which profile and revision each deposit was checked
+against;</li>
+<li>offers two search filters, <strong>Dataset category</strong> for the
+selected profile and <strong>File types</strong> for the semantic types
+of the files, so that people find datasets with the files they need, for
+example every dataset that contains an interview transcript under either
+interview profile.</li>
+</ul>
+<p>Two further steps by the builder extend these contributions:</p>
+<ul>
+<li><strong>Community terms:</strong> link each semantic type to an
+established community vocabulary term through the optional
+<code>uri</code> field of its definition, so that other repositories and
+tools interpret the annotations in the same way.</li>
+<li><strong>Metadata exports:</strong> map the annotations into DataCite
+and into the CCMM record for the National Metadata Directory, so that
+the file meanings reach services outside the repository. The CESNET
+Invenio documentation describes how to <a
+href="https://nrp-cz.github.io/docs/customize/model_backend/exports_and_imports">customise
+and add export formats</a>.</li>
+</ul>
+<p>Report profile conformance and content checks as separate results.
+Profile conformance says which files are present and how they are
+described; a content check says whether a file’s content is valid for
+its type. An overall FAIR assessment also covers identifiers, access,
+licensing and preservation, and needs a broader method such as the <a
+href="https://doi.org/10.15497/RDA00050">RDA FAIR Data Maturity
+Model</a>.</p>
+<h1 data-number="7" id="conclusion"><span
+class="header-section-number">7</span> Conclusion</h1>
+<p>This guide described how to add profile-guided deposition to a
+repository. The repository builder works with domain scientists to
+define shared semantic types and deposition profiles. Deposition
+controls help depositors assign file meanings and show which
+requirements their files meet. A profile checker applies the same rules
+on the server: depositors can save incomplete drafts, and publication is
+blocked until the required files are present and correctly annotated.
+The repository keeps its existing services for files, metadata, access
+and publication.</p>
+<p>In CESNET Invenio, the oarepo-pgd plugin provides these components. A
+repository installs the plugin, enables it on the dataset model, adds
+its configuration files and connects the deposit form. Other domains can
+be supported by adding configuration, as long as their requirements can
+be expressed as file counts. Relationships between files, grouping files
+into experiments and metadata extraction need further implementation, as
+the cryo-EM and molecular-dynamics examples show.</p>
+<p>Before adoption, domain scientists should review the profiles against
+representative deposits. A repository with its own deposit form or
+publication workflow should also make one test deposit through the form
+and one through the API. Shared definitions based on established
+community vocabulary terms make the annotations useful beyond a single
+repository.</p>
+<h1 class="unnumbered" id="related-outputs-and-resources">Related
+Outputs and Resources</h1>
+<ul>
+<li>Trtíková, I. et al. Analýza a návrh postupů k naplňování FAIR
+principů v rámci NRP/NDI. Národní repozitářová platforma pro výzkumná
+data / CESNET, version 1.2 (2026). <a
+href="https://doi.org/10.71495/5dv6-v116"
+class="uri">https://doi.org/10.71495/5dv6-v116</a>.</li>
+<li>M5.1.2 Profile-guided deposition: concept and demonstration.
+National Repository Platform for Research Data (2026).</li>
+<li>oarepo-pgd: profile-guided deposition plugin for CESNET Invenio,
+version 0.4.0. <a
+href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0"
+class="uri">https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0</a>.</li>
+<li>Profile-guided deposition demonstrator. CESNET Invenio repository
+with the plugin installed and configured. <a
+href="https://github.com/krab1k/profile-guided-deposition"
+class="uri">https://github.com/krab1k/profile-guided-deposition</a>.</li>
+<li>BioSim CZ architecture. <a
+href="https://biosimcz-architecture.biodata.ceitec.cz/"
+class="uri">https://biosimcz-architecture.biodata.ceitec.cz/</a>.</li>
+</ul>
+<h1 class="unnumbered" id="glossary">Glossary</h1>
+<div class="glossary-table">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span id="glossary-cesnet-invenio">CESNET Invenio</span></td>
+<td>The Invenio-based repository platform used within NRP, distributed
+as the OARepo software packages.</td>
+</tr>
+<tr>
+<td><span id="glossary-deposition-profile">Deposition
+profile</span></td>
+<td>File requirements and depositor guidance for a kind of dataset,
+using shared semantic types. It complements the repository’s metadata
+profile, which describes the dataset as a whole.</td>
+</tr>
+<tr>
+<td><span id="glossary-experiment">Experiment</span></td>
+<td>In the BioSim CZ architecture, one simulation within a study, with
+its own files and deposition profile.</td>
+</tr>
+<tr>
+<td><span id="glossary-fair">FAIR</span></td>
+<td>Findable, Accessible, Interoperable, and Reusable: principles for
+making data useful to people and software.</td>
+</tr>
+<tr>
+<td><span id="glossary-fip">FAIR Implementation Profile</span></td>
+<td>A community’s recorded choices of standards and resources for
+implementing FAIR.</td>
+</tr>
+<tr>
+<td><span id="glossary-file-annotation">File annotation</span></td>
+<td>Metadata recording a file’s assigned semantic types and optional
+description.</td>
+</tr>
+<tr>
+<td><span id="glossary-nrp">NRP</span></td>
+<td>National Repository Platform for Research Data: shared
+infrastructure and services for Czech research-data repositories.</td>
+</tr>
+<tr>
+<td><span id="glossary-profile-checker">Profile checker</span></td>
+<td>The server component that checks file annotations and the selected
+profile’s requirements against the repository’s current files.</td>
+</tr>
+<tr>
+<td><span id="glossary-requirement">Requirement</span></td>
+<td>A rule in a deposition profile that lists matching semantic types
+and sets a level (required, recommended or optional) and count
+limits.</td>
+</tr>
+<tr>
+<td><span id="glossary-semantic-type">Semantic type</span></td>
+<td>A file’s meaning within a dataset, identified by a stable term
+independently of format, such as Interview transcript.</td>
+</tr>
+</tbody>
+</table>
+</div>
+      <footer class="cover-footer">
+        <img src="media/funding.png" alt="Co-funded by the European Union; Ministry of Education, Youth and Sports of the Czech Republic" />
+        <address>
+          <strong>National Repository Platform<br />for Research Data (NRP)</strong><br />
+          CESNET, zájmové sdružení právnických osob<br />
+          Mailing Address: Gen. Píky 430/26, 160 00 Prague<br />
+          info@eosc.cz; www.eosc.cz
+        </address>
+      </footer>
+    </main>
+  </div>
+
+  <div class="diagram-modal-overlay" id="diagramModalOverlay"></div>
+  <div class="diagram-modal" id="diagramModal">
+    <div class="diagram-modal-header">
+      <h3 class="diagram-modal-title" id="diagramModalTitle">Diagram</h3>
+      <div class="diagram-modal-controls" aria-label="Diagram zoom controls">
+        <button type="button" id="diagramZoomOut" aria-label="Zoom out">-</button>
+        <button type="button" id="diagramZoomReset" aria-label="Reset zoom">Reset</button>
+        <button type="button" id="diagramZoomIn" aria-label="Zoom in">+</button>
+        <button type="button" class="diagram-modal-close" id="diagramModalClose" aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div class="diagram-modal-help">Use mouse wheel or the buttons to zoom. Drag the diagram to move around.</div>
+    <div class="diagram-modal-viewport" id="diagramModalViewport"></div>
+  </div>
+  <div class="img-lightbox-overlay" id="imgLightboxOverlay"></div>
+  <div class="img-lightbox" id="imgLightbox">
+    <button class="img-lightbox-close" id="imgLightboxClose" aria-label="Close">&times;</button>
+    <img src="" alt="" id="imgLightboxImg" />
+  </div>
+  <script src="assets/mermaid-support.js" defer></script>
+  <script src="assets/image-lightbox.js" defer></script>
+</body>
+</html>
