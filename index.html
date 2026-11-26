@@ -455,8 +455,8 @@ class="header-section-number">3</span> Implementation Walkthrough:
 CESNET Invenio</h1>
 <p>A CESNET Invenio repository already uploads files, saves metadata,
 controls access and manages publication. The <a
-href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0">oarepo-pgd
-plugin, version 0.4.0</a>, adds profile-guided deposition to these
+href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.1">oarepo-pgd
+plugin, version 0.4.1</a>, adds profile-guided deposition to these
 services. To use it, the repository builder first installs the plugin,
 enables it on the dataset model and connects the deposit form. These are
 manual steps, done once. The builder then describes the community’s
@@ -572,24 +572,34 @@ repository</a> records the result of these steps as tags:</p>
 <ul>
 <li><code>d5.1.3-baseline</code> is the generated repository with a
 dataset model, offering English and Czech.</li>
-<li><code>d5.1.3-plugin</code> adds the installed and connected plugin.
-The <a
+<li><code>d5.1.3-plugin</code> adds the installed and connected plugin
+with the interview configuration. The <a
 href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-baseline...d5.1.3-plugin">difference
 from the baseline</a> shows the installation in
 <code>pyproject.toml</code> and its lock file,
 <code>models/datasets/model.py</code>,
-<code>ui/datasets/__init__.py</code> and the record page template.</li>
-<li><code>d5.1.3-interviews</code> adds the interview configuration. The
-<a
-href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-plugin...d5.1.3-interviews">difference
-from the plugin tag</a> contains only YAML files.</li>
+<code>ui/datasets/__init__.py</code>, the record page template and the
+YAML files of the interview configuration.</li>
 </ul>
 <h2 data-number="3.1"
 id="install-the-plugin-and-enable-it-on-the-model"><span
 class="header-section-number">3.1</span> Install the Plugin and Enable
 It on the Model</h2>
-<p>From the repository root, add the tagged release:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add git+https://github.com/sb-ncbr/oarepo-pgd <span class="at">--tag</span> v0.4.0</span></code></pre></div>
+<p>Add the tagged release to the repository’s
+<code>pyproject.toml</code>, in the <code>dependencies</code> of the
+<code>[project]</code> table and as a source:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode toml"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">dependencies</span> <span class="op">=</span> <span class="op">[</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the repository&#39;s dependencies stay as they are</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;oarepo-pgd&quot;</span><span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.uv.sources]</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="dt">oarepo-pgd</span> <span class="op">=</span> <span class="op">{ </span><span class="dt">git</span><span class="op"> =</span> <span class="st">&quot;https://github.com/sb-ncbr/oarepo-pgd&quot;</span><span class="op">, </span><span class="dt">tag</span><span class="op"> =</span> <span class="st">&quot;v0.4.1&quot;</span><span class="op"> }</span></span></code></pre></div>
+<p>The repository’s <code>./run.sh</code> installs packages from the
+CESNET package index. The <code>./run.sh install</code> below installs
+the plugin with them and records it in <code>uv.lock</code>.</p>
 <p>In <code>models/datasets/model.py</code>, import
 <code>pgd_preset</code> from <code>oarepo_pgd</code> and append
 <code>pgd_preset(__file__)</code> to the model’s existing
@@ -649,20 +659,36 @@ page, include the plugin’s template in the model’s record page template,
 {%- endblock additional_record_details -%}</code></pre>
 <p>Run <code>./run.sh install</code> to rebuild the frontend. In the
 standard tabbed form, the plugin renames the files tab to <strong>Files
-and meanings</strong> and adds the profile controls to it. The controls
-use the repository’s theme, so the plugin brings no stylesheet and needs
-no change to the repository’s JavaScript.</p>
+and meanings</strong> and adds the profile controls to it. When a model
+has only one profile, the form selects it for a draft that has none. The
+controls use the repository’s theme, so the plugin brings no stylesheet
+and needs no change to the repository’s JavaScript.</p>
+<p>A repository whose services are already set up also rebuilds its
+search index, which needs the plugin’s two metadata fields before drafts
+with a profile can be saved. Stop the web and worker processes, run
+<code>./run.sh index rebuild</code>, and start them again; the workers
+then index every record. Search results are incomplete until the
+indexing has finished.</p>
 <p>A repository can change how the controls look while the plugin keeps
 the checks: the profile selector, the requirement cards, the file
 assignments table and the semantic definitions can each be replaced by
 the repository’s own component, and the record page table by the
 repository’s own template at the same path. A repository with its own
-deposit form sets <code>OAREPO_PGD_UI_OVERRIDES = False</code> in
-<code>invenio.cfg</code> and places the controls itself. The <a
-href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0#deposit-form-standard-and-custom">plugin
-README</a> describes both. An independent frontend or other software can
-read the same configuration at
-<code>GET /api/deposition-profiles?model=datasets</code>.</p>
+deposit form places the controls itself; when its form has its own files
+section, it switches the plugin’s automatic placement off with
+<code>OAREPO_PGD_UI_OVERRIDES = False</code> in
+<code>invenio.cfg</code>. The <a
+href="https://github.com/sb-ncbr/oarepo-pgd/blob/v0.4.1/docs/deposit-form.md">plugin’s
+deposit form documentation</a> describes both. An independent frontend
+or other software reads the same configuration at
+<code>GET /api/deposition-profiles?model=datasets</code> and checks a
+saved draft at
+<code>GET /api/deposition-profiles/check?model=datasets&amp;draft=&lt;id&gt;</code>,
+which returns each problem with a code, together with the file count and
+state of each requirement. The <a
+href="https://github.com/sb-ncbr/oarepo-pgd/blob/v0.4.1/docs/api.md">plugin’s
+API documentation</a> describes the fields, both endpoints and what
+saving and publication report.</p>
 <h2 data-number="3.4"
 id="follow-a-deposit-from-draft-to-publication"><span
 class="header-section-number">3.4</span> Follow a Deposit from Draft to
@@ -753,8 +779,8 @@ and describes the rest. The same rule applies as in the interview
 profiles: every file carries an annotation.</p>
 <p>The demonstrator adds this profile in the tag
 <code>d5.1.3-catch-all</code> (<a
-href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-interviews...d5.1.3-catch-all">difference
-from the interview tag</a>).</p>
+href="https://github.com/krab1k/profile-guided-deposition/compare/d5.1.3-plugin...d5.1.3-catch-all">difference
+from the plugin tag</a>).</p>
 <h2 data-number="4.2" id="cryo-em-maps"><span
 class="header-section-number">4.2</span> Cryo-EM Maps</h2>
 <p>Cryo-electron microscopy (cryo-EM) reconstructs the three-dimensional
@@ -1063,9 +1089,9 @@ class="uri">https://doi.org/10.71495/5dv6-v116</a>.</li>
 <li>M5.1.2 Profile-guided deposition: concept and demonstration.
 National Repository Platform for Research Data (2026).</li>
 <li>oarepo-pgd: profile-guided deposition plugin for CESNET Invenio,
-version 0.4.0. <a
-href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0"
-class="uri">https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.0</a>.</li>
+version 0.4.1. <a
+href="https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.1"
+class="uri">https://github.com/sb-ncbr/oarepo-pgd/tree/v0.4.1</a>.</li>
 <li>Profile-guided deposition demonstrator. CESNET Invenio repository
 with the plugin installed and configured. <a
 href="https://github.com/krab1k/profile-guided-deposition"
