@@ -6,6 +6,7 @@ from invenio_i18n import lazy_gettext as _
 from oarepo_ui.overrides import UIComponent
 from oarepo_ui.overrides.components import UIComponentImportMode
 from oarepo_ui.proxies import current_oarepo_ui
+from oarepo_pgd.components import DepositionProfilesComponent
 
 
 class DatasetsUIResourceConfig(RDMRecordsUIResourceConfig):
@@ -21,6 +22,7 @@ class DatasetsUIResourceConfig(RDMRecordsUIResourceConfig):
 
     components = [
         *RDMRecordsUIResourceConfig.components,
+        DepositionProfilesComponent,
     ]
 
     application_id = "datasets"

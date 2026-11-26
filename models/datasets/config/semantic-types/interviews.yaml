@@ -1,0 +1,21 @@
+- id: interview-recording
+  label:
+    en: Interview recording
+    cs: Nahrávka rozhovoru
+  definition:
+    en: A recording of an interview session.
+    cs: Zvukový nebo obrazový záznam rozhovoru.
+- id: interview-transcript
+  label:
+    en: Interview transcript
+    cs: Přepis rozhovoru
+  definition:
+    en: A written transcription of an interview session.
+    cs: Písemný přepis rozhovoru.
+- id: interview-guide
+  label:
+    en: Interview guide
+    cs: Scénář rozhovoru
+  definition:
+    en: The questions or prompts used by the interviewer.
+    cs: Otázky nebo podněty, které tazatel použil.

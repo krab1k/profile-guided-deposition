@@ -1,0 +1,45 @@
+id: recorded-interview
+revision: "1.0"
+dataset_category:
+  en: Recorded interview
+  cs: Nahraný rozhovor
+semantic_types:
+  - id: interview-recording
+    filename_patterns: ["*.wav", "*.flac", "*.mp3"]
+    formats: [wav, flac, mp3]
+  - id: interview-transcript
+    filename_patterns: ["interview.txt", "*transcript*.txt", "*transcript*.pdf", "*transcript*.docx"]
+    formats: [txt, pdf, docx]
+  - id: interview-guide
+    filename_patterns: ["*guide*.pdf", "*guide*.txt", "*guide*.docx"]
+requirements:
+  - id: recordings
+    label:
+      en: Recordings
+      cs: Nahrávky
+    level: required
+    min_files: 1
+    semantic_types: [interview-recording]
+    help:
+      en: Upload the recording of the interview.
+      cs: Nahrajte záznam rozhovoru.
+  - id: transcripts
+    label:
+      en: Transcripts
+      cs: Přepisy
+    level: optional
+    min_files: 0
+    semantic_types: [interview-transcript]
+    help:
+      en: Add a written transcription of the interview, if available.
+      cs: Přiložte písemný přepis rozhovoru, pokud existuje.
+  - id: guides
+    label:
+      en: Interview guides
+      cs: Scénáře rozhovoru
+    level: optional
+    min_files: 0
+    semantic_types: [interview-guide]
+    help:
+      en: Add the questions or prompts used by the interviewer.
+      cs: Přiložte otázky nebo podněty, které tazatel použil.

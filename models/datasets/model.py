@@ -11,6 +11,7 @@ from oarepo_rdm.model.presets import rdm_complete_preset
 from oarepo_communities.model.presets import communities_preset
 from oarepo_requests.model.presets.requests import requests_preset
 from oarepo_workflows.model.presets import workflows_preset
+from oarepo_pgd import pgd_preset
 
 from .serializers import DataCiteJSONSerializer
 
@@ -30,6 +31,9 @@ datasets_model = model(
         workflows_preset,
         requests_preset,
         communities_preset,
+
+        # Profile-guided deposition, configured in config/ next to this file
+        pgd_preset(__file__),
 
     ],
     types=[

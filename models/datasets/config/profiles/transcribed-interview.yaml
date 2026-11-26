@@ -1,0 +1,32 @@
+id: transcribed-interview
+revision: "1.0"
+dataset_category:
+  en: Transcribed interview
+  cs: Přepsaný rozhovor
+semantic_types:
+  - id: interview-transcript
+    filename_patterns: ["interview.txt", "*transcript*.txt", "*transcript*.pdf", "*transcript*.docx"]
+    formats: [txt, pdf, docx]
+  - id: interview-guide
+    filename_patterns: ["*guide*.pdf", "*guide*.txt", "*guide*.docx"]
+requirements:
+  - id: transcripts
+    label:
+      en: Transcripts
+      cs: Přepisy
+    level: required
+    min_files: 1
+    semantic_types: [interview-transcript]
+    help:
+      en: Provide a written transcription of the interview.
+      cs: Přiložte písemný přepis rozhovoru.
+  - id: guides
+    label:
+      en: Interview guides
+      cs: Scénáře rozhovoru
+    level: optional
+    min_files: 0
+    semantic_types: [interview-guide]
+    help:
+      en: Add the questions or prompts used by the interviewer.
+      cs: Přiložte otázky nebo podněty, které tazatel použil.

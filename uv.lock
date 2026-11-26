@@ -4064,6 +4064,17 @@ wheels = [
 ]
 
 [[package]]
+name = "oarepo-pgd"
+version = "0.4.1"
+source = { git = "https://github.com/sb-ncbr/oarepo-pgd?tag=v0.4.1#9cd9c2144cbc18e3efe54c4ff5e5be752e916cbc" }
+dependencies = [
+    { name = "marshmallow" },
+    { name = "oarepo-model" },
+    { name = "oarepo-ui" },
+    { name = "pyyaml" },
+]
+
+[[package]]
 name = "oarepo-previewer"
 version = "1.0.2"
 source = { registry = "https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple" }
@@ -4487,12 +4498,14 @@ source = { editable = "." }
 dependencies = [
     { name = "oarepo" },
     { name = "oarepo-app", extra = ["ccmm", "production"] },
+    { name = "oarepo-pgd" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "oarepo", extras = ["s3", "rdm"], specifier = ">=14.0.0b1,<15.0.0" },
     { name = "oarepo-app", extras = ["ccmm", "production"], specifier = ">=8.0.0,<9.0.0" },
+    { name = "oarepo-pgd", git = "https://github.com/sb-ncbr/oarepo-pgd?tag=v0.4.1" },
 ]
 
 [[package]]
