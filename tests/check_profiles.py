@@ -2,9 +2,10 @@
 
 Runs against the repository's own services as an ordinary depositor and checks
 the contract a repository builder relies on: the configuration API, saving an
-incomplete draft, and publication through a publish request, which is refused
-until the draft meets its profile. It leaves one published record and one
-metadata-only draft.
+incomplete draft, the draft check for other software with its codes, counts and
+Czech messages, publication through a publish request, which is refused until
+the draft meets its profile, and the search filters of the published record. It
+leaves one published record and one metadata-only draft.
 
 Run with the repository's services up and its environment loaded:
 
@@ -15,11 +16,13 @@ Run with the repository's services up and its environment loaded:
 import sys
 from pathlib import Path
 
-from invenio_access.permissions import authenticated_user, system_identity
+import flask_babel
+from invenio_access.permissions import any_user, authenticated_user, system_identity
 from invenio_access.utils import get_identity
 from invenio_accounts.proxies import current_datastore
 from invenio_app.factory import create_api
 from invenio_db import db
+from invenio_oauth2server.models import Token
 from invenio_requests.errors import CannotExecuteActionError
 from marshmallow import ValidationError
 
@@ -29,6 +32,7 @@ PROFILE = {"id": "recorded-interview", "revision": "1.0"}
 TRANSCRIPT = {"file_key": "interview.txt", "semantic_types": ["interview-transcript"]}
 RECORDING = {"file_key": "interview.wav", "semantic_types": ["interview-recording"]}
 REQUIRED = "Recordings: 0 of at least 1 file. Upload the recording of the interview."
+REQUIRED_CS = "Nahrávky: 0 z alespoň 1 souboru. Nahrajte záznam rozhovoru."
 
 failures = []
 
@@ -50,12 +54,15 @@ def refused(name, action):
 
 
 def depositor():
+    """The depositor's identity for the services and a personal token for the API."""
     user = current_datastore.get_user(EMAIL) or current_datastore.create_user(email=EMAIL, password=None, active=True)
     current_datastore.add_role_to_user(user, current_datastore.find_or_create_role("submitter"))
+    token = Token.create_personal("profile smoke test", user.id)
     db.session.commit()
     identity = get_identity(user)
     identity.provides.add(authenticated_user)
-    return identity
+    identity.provides.add(any_user)
+    return identity, token.access_token
 
 
 def record_data(annotations, files_enabled=True):
@@ -83,15 +90,34 @@ def profile_errors(item):
     return [m for e in item.errors or [] if e["field"] == "metadata.pgd_file_annotations" for m in e["messages"]]
 
 
+def texts(check):
+    """The check's messages as a draft save reports them, prefixed with their file keys."""
+    return [e["message"] if e["file_key"] is None else f"{e['file_key']}: {e['message']}" for e in check["errors"]]
+
+
 app = create_api()
 with app.app_context():
     from invenio_records_resources.proxies import current_service_registry
     from oarepo_requests.proxies import current_requests_service
 
     service = current_service_registry.get("datasets")
-    identity = depositor()
+    identity, token = depositor()
+    client = app.test_client()
 
-    response = app.test_client().get("/deposition-profiles?model=datasets", base_url="https://localhost")
+    def check(draft_id, **headers):
+        # Test requests share this script's app context, where flask_babel keeps the
+        # locale it chose first; forget it around the request so the request chooses.
+        flask_babel.refresh()
+        try:
+            response = client.get(
+                "/deposition-profiles/check", query_string={"model": "datasets", "draft": draft_id},
+                headers={"Authorization": f"Bearer {token}", **headers}, base_url="https://localhost",
+            )
+        finally:
+            flask_babel.refresh()
+        return response.status_code, response.get_json() or {}
+
+    response = client.get("/deposition-profiles?model=datasets", base_url="https://localhost")
     ids = [profile["id"] for profile in (response.get_json() or {}).get("profiles", [])]
     report("configuration API serves the model's profiles", response.status_code == 200 and PROFILE["id"] in ids, str(ids))
 
@@ -103,6 +129,17 @@ with app.app_context():
     report("incomplete draft saves and reports the missing recording", profile_errors(saved) == [REQUIRED], str(profile_errors(saved)))
     stored = service.read_draft(identity, id_).data["metadata"]
     report("draft keeps profile and annotations", stored["pgd_deposition_profile"] == PROFILE and stored["pgd_file_annotations"] == [TRANSCRIPT])
+
+    # Other software reads the same result from the draft check, with codes, counts and states.
+    status, result = check(id_)
+    codes = [(e["code"], e["file_key"], e["requirement"]) for e in result.get("errors", [])]
+    report("draft check reports the save's problem with its code", status == 200
+           and texts(result) == profile_errors(saved) and codes == [("too_few_files", None, "recordings")], str(codes))
+    report("draft check counts files per requirement",
+           result.get("counts") == {"recordings": 0, "transcripts": 1, "guides": 0}
+           and result.get("states", {}).get("recordings") == "unmet", f"{result.get('counts')} {result.get('states')}")
+    status, result = check(id_, **{"Accept-Language": "cs"})
+    report("draft check speaks the request's language", texts(result) == [REQUIRED_CS], str(texts(result)))
 
     topic = service.read_draft(identity, id_)._record
     refused("publish request refused for an incomplete draft",
@@ -135,6 +172,16 @@ with app.app_context():
     report("accepted request publishes the record with its annotations",
            published["pgd_deposition_profile"] == PROFILE and published["pgd_file_annotations"] == [TRANSCRIPT, RECORDING])
 
+    # The published record is found under its dataset category and its files' types.
+    service.indexer.refresh()
+    found = service.search(identity, params={"q": f'id:"{id_}"'}).to_dict().get("aggregations", {})
+    buckets = {name: {b["key"] for b in found.get(name, {}).get("buckets", [])}
+               for name in ("metadata.pgd_deposition_profile.id", "metadata.pgd_file_annotations.semantic_types")}
+    report("search filters list the record's profile and file types",
+           buckets["metadata.pgd_deposition_profile.id"] == {PROFILE["id"]}
+           and buckets["metadata.pgd_file_annotations.semantic_types"] == {"interview-transcript", "interview-recording"},
+           str(buckets))
+
     # Metadata-only records have no files to check.
     other = service.create(identity, record_data([], files_enabled=False))
     try:
@@ -142,6 +189,9 @@ with app.app_context():
         report("metadata-only draft needs no profile", True)
     except ValidationError as error:
         report("metadata-only draft needs no profile", False, str(error.messages))
+    status, result = check(other.id)
+    report("draft check of a metadata-only draft is empty",
+           status == 200 and result.get("files_enabled") is False and result.get("errors") == [], str(result))
 
     print(f"records: {id_} (published), {other.id} (metadata-only draft)")
 

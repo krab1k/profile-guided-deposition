@@ -48,7 +48,7 @@ After pulling new commits, run `./run.sh install` again.
 
 ## Smoke test
 
-With the services running, `tests/check_profiles.py` checks the configuration API, saving an incomplete draft and publication through a publish request:
+With the services running, `tests/check_profiles.py` checks the configuration API, saving an incomplete draft, the draft check for other software with its codes, counts and Czech messages, publication through a publish request and the search filters of the published record:
 
 ```sh
 set -a; source variables; set +a
