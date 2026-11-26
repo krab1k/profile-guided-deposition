@@ -566,7 +566,11 @@ annotations.</td>
 </table>
 <p>The following steps are for a repository generated from the standard
 CESNET Invenio templates on <code>oarepo-app</code> 8 (OARepo 14.2,
-InvenioRDM 14). The <a
+InvenioRDM 14), and they describe version 0.4.1 of the plugin. They say
+what the repository builder does and why. The <a
+href="https://github.com/sb-ncbr/oarepo-pgd/blob/v0.4.1/README.md#installation">plugin’s
+README for that version</a> gives the exact commands and code, and the
+README of a later version describes that version’s steps. The <a
 href="https://github.com/krab1k/profile-guided-deposition">demonstrator
 repository</a> records the result of these steps as tags:</p>
 <ul>
@@ -585,32 +589,14 @@ YAML files of the interview configuration.</li>
 id="install-the-plugin-and-enable-it-on-the-model"><span
 class="header-section-number">3.1</span> Install the Plugin and Enable
 It on the Model</h2>
-<p>Add the tagged release to the repository’s
-<code>pyproject.toml</code>, in the <code>dependencies</code> of the
-<code>[project]</code> table and as a source:</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode toml"><code class="sourceCode toml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">[project]</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">dependencies</span> <span class="op">=</span> <span class="op">[</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the repository&#39;s dependencies stay as they are</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;oarepo-pgd&quot;</span><span class="op">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">]</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">[tool.uv.sources]</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="dt">oarepo-pgd</span> <span class="op">=</span> <span class="op">{ </span><span class="dt">git</span><span class="op"> =</span> <span class="st">&quot;https://github.com/sb-ncbr/oarepo-pgd&quot;</span><span class="op">, </span><span class="dt">tag</span><span class="op"> =</span> <span class="st">&quot;v0.4.1&quot;</span><span class="op"> }</span></span></code></pre></div>
-<p>The repository’s <code>./run.sh</code> installs packages from the
-CESNET package index. The <code>./run.sh install</code> below installs
-the plugin with them and records it in <code>uv.lock</code>.</p>
-<p>In <code>models/datasets/model.py</code>, import
-<code>pgd_preset</code> from <code>oarepo_pgd</code> and append
-<code>pgd_preset(__file__)</code> to the model’s existing
-<code>presets</code> list. The preset uses the model’s location to find
-its configuration. It also adds the two metadata fields that store the
-selected profile and the file annotations, so the model’s
-<code>metadata.yaml</code> stays unchanged. The plugin finds the deposit
-form by the <code>application_id</code> of the model’s user interface
-configuration. The repository templates set it to the model name, which
-the preset assumes; a repository that uses another value passes it to
-the preset, and the deposit page names the value if they differ.</p>
+<p>The builder adds the plugin’s tagged release to the repository’s
+dependencies and enables the plugin on the dataset model. Enabling it
+adds two metadata fields to the model, one for the selected profile and
+one for the file annotations, so the model’s own metadata description
+stays unchanged. The plugin reads its configuration from a directory
+next to the model and finds the model’s deposit form through the model’s
+user interface configuration. A repository generated from the standard
+templates already follows these conventions.</p>
 <h2 data-number="3.2" id="add-the-interview-configuration"><span
 class="header-section-number">3.2</span> Add the Interview
 Configuration</h2>
@@ -637,57 +623,35 @@ naming the file and line. An enabled model needs at least one
 profile.</p>
 <h2 data-number="3.3" id="connect-the-deposit-form"><span
 class="header-section-number">3.3</span> Connect the Deposit Form</h2>
-<p>In <code>ui/datasets/__init__.py</code>, append the plugin’s
-component to the model’s UI resource configuration, after the components
-already there:</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> oarepo_pgd.components <span class="im">import</span> DepositionProfilesComponent</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DatasetsUIResourceConfig(RDMRecordsUIResourceConfig):</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    components <span class="op">=</span> [</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">*</span>RDMRecordsUIResourceConfig.components,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        DepositionProfilesComponent,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    ]</span></code></pre></div>
-<p>The component passes the model’s configuration to the deposit form
-and the file meanings to the record page. To show them on the record
-page, include the plugin’s template in the model’s record page template,
-<code>ui/datasets/templates/semantic-ui/datasets/record_detail/main.html</code>:</p>
-<pre class="jinja"><code>{%- block additional_record_details -%}
-  {{ super() }}
-  {% include &quot;oarepo_pgd/record_detail/file_meanings.html&quot; %}
-{%- endblock additional_record_details -%}</code></pre>
-<p>Run <code>./run.sh install</code> to rebuild the frontend. In the
-standard tabbed form, the plugin renames the files tab to <strong>Files
-and meanings</strong> and adds the profile controls to it. When a model
+<p>The builder adds the plugin’s component to the model’s user interface
+configuration and includes the plugin’s template in the model’s record
+page. The component passes the configuration to the deposit form and the
+file meanings to the record page. After the repository is installed
+again, the standard tabbed form renames its files tab to <strong>Files
+and meanings</strong> and shows the profile controls there. When a model
 has only one profile, the form selects it for a draft that has none. The
 controls use the repository’s theme, so the plugin brings no stylesheet
 and needs no change to the repository’s JavaScript.</p>
-<p>A repository whose services are already set up also rebuilds its
-search index, which needs the plugin’s two metadata fields before drafts
-with a profile can be saved. Stop the web and worker processes, run
-<code>./run.sh index rebuild</code>, and start them again; the workers
-then index every record. Search results are incomplete until the
-indexing has finished.</p>
+<p>A repository whose search index was created before the plugin was
+installed also rebuilds that index, because the two metadata fields are
+new to it, and drafts with a profile cannot be saved until the index has
+them. Search results are incomplete until the records are indexed again,
+so the builder plans the rebuild like other maintenance. The plugin’s
+README gives the procedure.</p>
 <p>A repository can change how the controls look while the plugin keeps
 the checks: the profile selector, the requirement cards, the file
 assignments table and the semantic definitions can each be replaced by
 the repository’s own component, and the record page table by the
-repository’s own template at the same path. A repository with its own
-deposit form places the controls itself; when its form has its own files
-section, it switches the plugin’s automatic placement off with
-<code>OAREPO_PGD_UI_OVERRIDES = False</code> in
-<code>invenio.cfg</code>. The <a
+repository’s own template. A repository with its own deposit form places
+the controls itself. The <a
 href="https://github.com/sb-ncbr/oarepo-pgd/blob/v0.4.1/docs/deposit-form.md">plugin’s
 deposit form documentation</a> describes both. An independent frontend
-or other software reads the same configuration at
-<code>GET /api/deposition-profiles?model=datasets</code> and checks a
-saved draft at
-<code>GET /api/deposition-profiles/check?model=datasets&amp;draft=&lt;id&gt;</code>,
-which returns each problem with a code, together with the file count and
-state of each requirement. The <a
+or other software uses two endpoints of the plugin: one serves the
+configuration, and one checks a saved draft and returns each problem
+with a code, together with the file count and state of each requirement.
+The <a
 href="https://github.com/sb-ncbr/oarepo-pgd/blob/v0.4.1/docs/api.md">plugin’s
-API documentation</a> describes the fields, both endpoints and what
+API documentation</a> describes both endpoints, the two fields and what
 saving and publication report.</p>
 <h2 data-number="3.4"
 id="follow-a-deposit-from-draft-to-publication"><span
@@ -703,17 +667,17 @@ transcript requirement; an interview guide remains optional. The form
 shows the counts and marks each rule that still fails.</p>
 <p>The saved draft stores the selected profile and one annotation for
 each file in its metadata:</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_deposition_profile&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;transcribed-interview&quot;</span><span class="fu">,</span> <span class="dt">&quot;revision&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0&quot;</span><span class="fu">},</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_file_annotations&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;file_key&quot;</span><span class="fu">:</span> <span class="st">&quot;interview.txt&quot;</span><span class="fu">,</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;semantic_types&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;interview-transcript&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Transcript of the interview&quot;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_deposition_profile&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;transcribed-interview&quot;</span><span class="fu">,</span> <span class="dt">&quot;revision&quot;</span><span class="fu">:</span> <span class="st">&quot;1.0&quot;</span><span class="fu">},</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pgd_file_annotations&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;file_key&quot;</span><span class="fu">:</span> <span class="st">&quot;interview.txt&quot;</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;semantic_types&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;interview-transcript&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Transcript of the interview&quot;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <p>Here <code>file_key</code> is the name under which the repository
 stores the file in the record, exactly as the depositor’s computer
 supplied it. The depositor selects the profile by name, and the plugin
@@ -759,14 +723,14 @@ class="header-section-number">4.1</span> Catch-All Deposits</h2>
 <p>A repository accepting diverse material can use a profile without
 requirements that permits the shared <code>other</code> type, together
 with any specific types it wants to offer:</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span><span class="kw">:</span><span class="at"> general-dataset</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">revision</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.0&quot;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dataset_category</span><span class="kw">:</span><span class="at"> General dataset</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">semantic_types</span><span class="kw">:</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> other</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">filename_patterns</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;*&quot;</span><span class="kw">]</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">requirements</span><span class="kw">:</span><span class="at"> </span><span class="kw">[]</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span><span class="kw">:</span><span class="at"> general-dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">revision</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;1.0&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dataset_category</span><span class="kw">:</span><span class="at"> General dataset</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">semantic_types</span><span class="kw">:</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">id</span><span class="kw">:</span><span class="at"> other</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">filename_patterns</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;*&quot;</span><span class="kw">]</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">requirements</span><span class="kw">:</span><span class="at"> </span><span class="kw">[]</span></span></code></pre></div>
 <p>The pattern <code>"*"</code> is the least specific pattern, so it
 pre-selects <code>other</code> for every file that no more specific
 pattern matches. Set <code>requires_description: true</code> in the
